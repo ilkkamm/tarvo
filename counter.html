@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Countdown 10v Synttärit — MEME EDITION</title>
+
+<style>
+  :root{
+    --glass: rgba(0,0,0,0.35);
+    --neon: drop-shadow(0 0 12px rgba(255,255,255,.7));
+  }
+
+  /* CHAOS BACKGROUND */
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+    overflow-x: hidden;
+    background: radial-gradient(circle at 20% 20%, #ff9a9e, transparent 55%),
+                radial-gradient(circle at 80% 30%, #fad0c4, transparent 50%),
+                radial-gradient(circle at 50% 80%, #a18cd1, transparent 55%),
+                linear-gradient(135deg, #ff9a9e, #fad0c4);
+    animation: hue 6s linear infinite;
+  }
+  @keyframes hue { to { filter: hue-rotate(360deg); } }
+
+  /* Floating meme emojis */
+  .floaty {
+    position: fixed;
+    bottom: -10vh;
+    font-size: clamp(18px, 3vw, 48px);
+    opacity: 0.9;
+    pointer-events: none;
+    animation: floatUp linear forwards;
+    filter: var(--neon);
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* HEADER */
+  h1 {
+    margin-top: 72px;
+    font-size: clamp(2rem, 6vw, 4rem);
+    letter-spacing: 1px;
+    filter: var(--neon);
+    animation: wobble 1.8s ease-in-out infinite;
+    user-select: none;
+  }
+  @keyframes wobble {
+    0%,100% { transform: rotate(-1.2deg) scale(1); }
+    50% { transform: rotate(1.2deg) scale(1.03); }
+  }
+
+  /* Subtitle meme banner */
+  .banner {
+    display: inline-block;
+    margin: 12px auto 0;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.14);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.25);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    font-weight: 700;
+    font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+    animation: bannerPulse 1.3s infinite;
+  }
+  @keyframes bannerPulse { 50% { transform: scale(1.03); } }
+
+  /* COUNTDOWN CARD - glitchy glass */
+  #countdownWrap {
+    margin-top: 26px;
+    display: inline-block;
+    position: relative;
+    padding: 22px 28px;
+    border-radius: 18px;
+    background: var(--glass);
+    border: 1px solid rgba(255,255,255,0.25);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+    filter: var(--neon);
+    overflow: hidden;
+  }
+  #countdown {
+    font-size: clamp(1.2rem, 4vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+
+  /* glitch scanlines */
+  #countdownWrap::before{
+    content:"";
+    position:absolute; inset:0;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.05) 0px,
+      rgba(255,255,255,0.05) 2px,
+      rgba(0,0,0,0.02) 4px,
+      rgba(0,0,0,0.02) 6px
+    );
+    mix-blend-mode: overlay;
+    opacity: .5;
+    pointer-events:none;
+  }
+  #countdownWrap::after{
+    content:"";
+    position:absolute; inset:-40%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18), transparent 55%);
+    animation: shine 2.4s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes shine { 50% { transform: translate(18%, 12%) rotate(20deg); } }
+
+  /* BIG MEME STICKERS */
+  .stickers {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    max-width: 720px;
+    padding: 0 16px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .sticker {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.22);
+    backdrop-filter: blur(8px);
+    border-radius: 18px;
+    padding: 12px 10px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+    transform: rotate(var(--rot, 0deg));
+    transition: transform .15s ease, box-shadow .15s ease;
+    user-select: none;
+  }
+  .sticker:hover {
+    transform: scale(1.03) rotate(calc(var(--rot, 0deg) * -1));
+    box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+  }
+  .sticker .big { font-size: clamp(1.6rem, 5vw, 3rem); display:block; }
+  .sticker .txt { opacity: 0.95; font-weight: 800; font-size: 0.95rem; }
+
+  /* BUTTON BAR */
+  .controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 0 16px;
+  }
+  button {
+    cursor: pointer;
+    border: 0;
+    padding: 12px 16px;
+    border-radius: 999px;
+    font-weight: 900;
+    letter-spacing: .5px;
+    background: rgba(255,255,255,0.18);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.25);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+    transition: transform .12s ease, background .12s ease;
+  }
+  button:hover { transform: translateY(-2px) scale(1.02); background: rgba(255,255,255,0.24); }
+  button:active { transform: translateY(0px) scale(0.99); }
+
+  /* PARTY MODE effects */
+  .party #countdownWrap { animation: glitch 0.35s infinite; }
+  @keyframes glitch {
+    0% { transform: translate(0,0) skew(0deg); }
+    25% { transform: translate(2px,-1px) skew(-0.6deg); }
+    50% { transform: translate(-2px,1px) skew(0.6deg); }
+    75% { transform: translate(1px,2px) skew(-0.4deg); }
+    100% { transform: translate(0,0) skew(0deg); }
+  }
+  .party h1 { animation: rave 0.18s infinite; }
+  @keyframes rave { 50% { transform: scale(1.02) rotate(1deg); } }
+
+  .shake {
+    animation: shake 0.4s ease-in-out;
+  }
+  @keyframes shake {
+    0% { transform: translate(0,0); }
+    20% { transform: translate(4px,-2px); }
+    40% { transform: translate(-4px,2px); }
+    60% { transform: translate(3px,3px); }
+    80% { transform: translate(-3px,-3px); }
+    100% { transform: translate(0,0); }
+  }
+
+  /* Confetti canvas */
+  canvas#confetti {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Firework pops */
+  .pop {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: white;
+    pointer-events: none;
+    z-index: 6;
+    animation: pop 0.7s ease-out forwards;
+    filter: var(--neon);
+  }
+  @keyframes pop {
+    0% { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+    100% { transform: translate(-50%,-50%) scale(10); opacity: 0; }
+  }
+
+  footer {
+    margin: 28px 0 22px;
+    opacity: 0.88;
+    font-weight: 700;
+    padding: 0 16px;
+  }
+
+  @media (max-width: 520px) {
+    .stickers { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+
+<body>
+<canvas id="confetti"></canvas>
+
+<h1>🎉 Countdown 10v Synttäreihin 🎉</h1>
+<div class="banner" id="banner">🔥 TÄMÄ EI OLE PORA — tämä on synttärihype 🔥</div>
+
+<div id="countdownWrap">
+  <div id="countdown"></div>
+</div>
+
+<div class="controls">
+  <button id="partyBtn">💿 PARTY MODE: OFF</button>
+  <button id="moreMemesBtn">🧠 Lisää meemejä</button>
+  <button id="resetBtn">🧯 Resetoi kaaos</button>
+</div>
+
+<div class="stickers" id="stickers">
+  <div class="sticker" style="--rot:-2deg"><span class="big">🐶</span><span class="txt">much synttäri</span></div>
+  <div class="sticker" style="--rot:2deg"><span class="big">🗿</span><span class="txt">bruh moment</span></div>
+  <div class="sticker" style="--rot:-1deg"><span class="big">💀</span><span class="txt">kuolen nauruun</span></div>
+</div>
+
+<footer>
+  👑 Pro tip: paina PARTY MODE ja klikkaile taustaa. (Tiede.)
+</footer>
+
+<!-- Optional: tiny party sound (no autoplay). You can swap to any mp3 you host. -->
+<audio id="partyAudio" preload="auto">
+  <!-- Put your own sound here if you want, e.g. <source src="party.mp3" type="audio/mpeg"> -->
+</audio>
+
+<script>
+/* --- Birthday logic (same as yours) --- */
+function getNextBirthday() {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  let birthday = new Date(currentYear, 1, 23); // 23.2. (months start at 0)
+  if (now > birthday) birthday = new Date(currentYear + 1, 1, 23);
+  return birthday;
+}
+
+let partyMode = false;
+let memeLevel = 0;
+
+function updateCountdown() {
+  const now = Date.now();
+  const birthday = getNextBirthday().getTime();
+  const distance = birthday - now;
+
+  if (distance <= 0) {
+    document.getElementById("countdown").innerHTML = "🎂 HYVÄÄ 10v SYNTYMÄPÄIVÄÄ! 🎂";
+    document.getElementById("banner").textContent = "🎊 IT'S BIRTHDAY TIME — LET'S GOOOOOO 🎊";
+    if (!partyMode) toggleParty(true);
+    return;
+  }
+
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  const hype = partyMode ? "🔥💃🕺🔥" : "🎈";
+  document.getElementById("countdown").innerHTML =
+    `${hype} ${days} päivää ${hours} tuntia ${minutes} minuuttia ${seconds} sekuntia ${hype}`;
+
+  // tiny dramatic shake on "nice" second values
+  if (partyMode && (seconds % 10 === 0)) {
+    document.body.classList.add("shake");
+    setTimeout(() => document.body.classList.remove("shake"), 450);
+    spawnFirework();
+  }
+
+  // drip memes slowly
+  if (partyMode && Math.random() < 0.35) spawnFloaty();
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+/* --- PARTY MODE --- */
+function toggleParty(forceOn = null){
+  partyMode = forceOn !== null ? forceOn : !partyMode;
+  document.body.classList.toggle("party", partyMode);
+  document.getElementById("partyBtn").textContent = partyMode ? "💿 PARTY MODE: ON" : "💿 PARTY MODE: OFF";
+  if (partyMode) {
+    startConfetti();
+    for (let i=0;i<10;i++) spawnFloaty();
+  } else {
+    stopConfetti();
+  }
+}
+
+document.getElementById("partyBtn").addEventListener("click", () => toggleParty());
+
+/* --- MORE MEMES button --- */
+const memePhrases = [
+  "sheesh 😮‍💨", "no cap 🧢", "based 🗿", "sigma energy 🐺",
+  "tää on fine 🔥", "W synttärit 🏆", "giga-hype 🚀", "bruh moment 🗿",
+  "kuin meemi konsanaan 💀", "SUS 📮", "OK boomer 👴", "skill issue 🎮"
+];
+
+document.getElementById("moreMemesBtn").addEventListener("click", () => {
+  memeLevel++;
+  const b = document.getElementById("banner");
+  b.textContent = memePhrases[memeLevel % memePhrases.length].toUpperCase();
+
+  // add a new sticker
+  const sticker = document.createElement("div");
+  sticker.className = "sticker";
+  sticker.style.setProperty("--rot", ((Math.random()*6)-3).toFixed(1) + "deg");
+  const big = ["😂","🎉","💀","🐶","🗿","🤡","✨","🔥","🚀","🍕","🧁","😎","🥳","👑"][Math.floor(Math.random()*14)];
+  const txt = memePhrases[Math.floor(Math.random()*memePhrases.length)];
+  sticker.innerHTML = `<span class="big">${big}</span><span class="txt">${txt}</span>`;
+  document.getElementById("stickers").appendChild(sticker);
+
+  if (partyMode) {
+    for (let i=0;i<6;i++) spawnFloaty();
+    spawnFirework();
+  }
+});
+
+/* --- RESET button --- */
+document.getElementById("resetBtn").addEventListener("click", () => {
+  memeLevel = 0;
+  document.getElementById("banner").textContent = "🔥 TÄMÄ EI OLE PORA — tämä on synttärihype 🔥";
+  document.getElementById("stickers").innerHTML = `
+    <div class="sticker" style="--rot:-2deg"><span class="big">🐶</span><span class="txt">much synttäri</span></div>
+    <div class="sticker" style="--rot:2deg"><span class="big">🗿</span><span class="txt">bruh moment</span></div>
+    <div class="sticker" style="--rot:-1deg"><span class="big">💀</span><span class="txt">kuolen nauruun</span></div>
+  `;
+  toggleParty(false);
+});
+
+/* --- Click anywhere = extra fireworks in party mode --- */
+document.addEventListener("click", (e) => {
+  if (!partyMode) return;
+  spawnFirework(e.clientX, e.clientY);
+  for (let i=0;i<3;i++) spawnFloaty();
+});
+
+/* --- Floating emojis --- */
+const floaties = ["😂","🥳","🎉","✨","🔥","💀","🗿","🐶","🚀","🤡","🍰","🎈","👑","🧁","🍕","😎","📮"];
+function spawnFloaty(){
+  const el = document.createElement("div");
+  el.className = "floaty";
+  el.textContent = floaties[Math.floor(Math.random()*floaties.length)];
+  el.style.left = (Math.random()*100) + "vw";
+  el.style.animationDuration = (4 + Math.random()*4).toFixed(2) + "s";
+  el.style.opacity = (0.6 + Math.random()*0.4).toFixed(2);
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 9000);
+}
+
+/* --- Firework pop --- */
+function spawnFirework(x = Math.random()*window.innerWidth, y = Math.random()*window.innerHeight*0.6){
+  const pop = document.createElement("div");
+  pop.className = "pop";
+  pop.style.left = x + "px";
+  pop.style.top = y + "px";
+  document.body.appendChild(pop);
+  setTimeout(() => pop.remove(), 900);
+}
+
+/* --- Confetti canvas (lightweight) --- */
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+let confettiId = null;
+let pieces = [];
+
+function resizeCanvas(){
+  canvas.width = window.innerWidth * devicePixelRatio;
+  canvas.height = window.innerHeight * devicePixelRatio;
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+function makeConfetti(){
+  const count = 120;
+  pieces = Array.from({length: count}, () => ({
+    x: Math.random()*window.innerWidth,
+    y: Math.random()*window.innerHeight - window.innerHeight,
+    r: 2 + Math.random()*5,
+    vx: -2 + Math.random()*4,
+    vy: 2 + Math.random()*5,
+    rot: Math.random()*Math.PI,
+    vr: -0.2 + Math.random()*0.4
+  }));
+}
+
+function drawConfetti(){
+  ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
+  ctx.globalAlpha = 0.9;
+
+  for (const p of pieces){
+    p.x += p.vx;
+    p.y += p.vy;
+    p.rot += p.vr;
+
+    if (p.y > window.innerHeight + 20){
+      p.y = -20;
+      p.x = Math.random()*window.innerWidth;
+    }
+    if (p.x < -20) p.x = window.innerWidth + 20;
+    if (p.x > window.innerWidth + 20) p.x = -20;
+
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.fillRect(-p.r, -p.r, p.r*2, p.r*2);
+    ctx.restore();
+  }
+
+  ctx.globalAlpha = 1;
+  confettiId = requestAnimationFrame(drawConfetti);
+}
+
+function startConfetti(){
+  makeConfetti();
+  if (!confettiId) confettiId = requestAnimationFrame(drawConfetti);
+}
+function stopConfetti(){
+  if (confettiId){
+    cancelAnimationFrame(confettiId);
+    confettiId = null;
+    ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
+  }
+}
+</script>
+
+</body>
+</html>
